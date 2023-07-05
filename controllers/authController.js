@@ -1,0 +1,132 @@
+import userModel from "../models/userModel.js";
+import { comparePassword, hashPassword } from "../helpers/authHelper.js";
+import JWT from "jsonwebtoken";
+
+export const registerController = async (req, res) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+
+    //validation
+    if (!name) {
+      return res.send({
+        message: "Name is required",
+      });
+    }
+    if (!email) {
+      return res.send({
+        message: "Email is required",
+      });
+    }
+    if (!password) {
+      return res.send({
+        message: "Password is required",
+      });
+    }
+    if (!phone) {
+      return res.send({
+        message: "Phone is required",
+      });
+    }
+    if (!address) {
+      return res.send({
+        message: "Address is required",
+      });
+    }
+    //check user
+    const existingUser = await userModel.findOne({ email });
+
+    //existing user
+    if (existingUser) {
+      return res.status(200).send({
+        success: false,
+        message: "Already  Register! Please login",
+      });
+    }
+
+    //hash password
+    const hashedPassword = await hashPassword(password);
+    //save
+    const user = await new userModel({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      address,
+    }).save();
+
+    res.send({
+      success: true,
+      message: "User Register Successfully",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "Error in Registraiton",
+      success: false,
+      error,
+    });
+  }
+};
+
+//login controller
+export const loginController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    //validation
+    if (!email || !password) {
+      return res.status(404).send({
+        success: false,
+        error: "Email is required",
+      });
+    }
+    //check user
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "Email is not registered",
+      });
+    }
+
+    const match = await comparePassword(password, user.password);
+
+    if (!match) {
+      return res.status(401).send({
+        success: false,
+        message: "Invalied Password",
+      });
+    }
+
+    //token
+    const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.status(200).send({
+      success: true,
+      message: "Login Successfully",
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "Error in Login",
+      success: false,
+      error,
+    });
+  }
+};
+
+//test controller
+export const testController = (req, res) => {
+  console.log("Protected Route");
+  res.send("Protected Route");
+};
