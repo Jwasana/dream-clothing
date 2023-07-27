@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layouts/Layout";
 import AdminMenu from "../../components/Layouts/AdminMenu";
+//import getAllProducts from "../../components/Utils/getAllProducts";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Select } from "antd";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
 const CreateProduct = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [photo, setPhoto] = useState("");
   const [name, setName] = useState("");
@@ -36,7 +39,34 @@ const CreateProduct = () => {
   }, []);
 
   //create product function
-  const handleCreate = () => {};
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    try {
+      const productData = new FormData();
+      productData.append("name", name);
+      productData.append("description", desciption);
+      productData.append("price", price);
+      productData.append("quantity", quantity);
+      productData.append("shipping", shipping);
+      productData.append("category", category);
+      productData.append("photo", photo);
+
+      const { data } = await axios.post(
+        "/api/v1/product/create-product",
+        productData
+      );
+      if (data?.success) {
+        toast.success("Successfully created a Product!");
+        navigate("/dashboard/admin/products");
+        //getAllProducts();
+      } else {
+        toast.error(data?.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Somthin went wrong");
+    }
+  };
   return (
     <Layout title={"Dashboard - Create Prouct"}>
       <div className="container-fluid m-3 p-3">
@@ -58,7 +88,7 @@ const CreateProduct = () => {
                 }}
               >
                 {categories?.map((category) => (
-                  <Option key={category._id} value={category.name}>
+                  <Option key={category._id} value={category._id}>
                     {category.name}
                   </Option>
                 ))}
