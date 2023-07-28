@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layouts/Layout";
 import AdminMenu from "../../components/Layouts/AdminMenu";
-//import getAllProducts from "../../components/Utils/getAllProducts";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Select } from "antd";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
