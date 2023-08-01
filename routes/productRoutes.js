@@ -10,6 +10,7 @@ import {
   updateProductController,
   filterProductsController,
   productCountController,
+  productListController,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -60,5 +61,8 @@ router.post("/products-filter", filterProductsController);
 
 //product count
 router.get("/product-count", productCountController);
+
+//product per page
+router.get("/product-list/:page", productListController);
 
 export default router;

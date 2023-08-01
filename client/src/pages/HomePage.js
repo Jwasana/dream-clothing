@@ -9,15 +9,53 @@ const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]); //categories
   const [radio, setRadio] = useState([]); //price
+  const [total, setTotal] = useState(0); //total products
+  const [page, setPage] = useState(1); //page number
+  const [loading, setLoading] = useState(false); //loading
 
   //get all products
   const getAllProducts = async () => {
     try {
+      setLoading(true);
       const { data: productsData } = await axios.get(
-        "/api/v1/product/get-product"
+        `/api/v1/product/product-list/${page}`
       );
+      setLoading(false);
       setProducts(productsData.products);
     } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  //get total count of products
+  const getTotalProducts = async () => {
+    try {
+      const { data: totalData } = await axios.get(
+        "/api/v1/product/product-count"
+      );
+      setTotal(totalData?.total);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (page === 1) return;
+    loadMore();
+  }, [page]);
+
+  //load more function
+  const loadMore = async () => {
+    try {
+      setLoading(true);
+      const { data: productsData } = await axios.get(
+        `/api/v1/product/product-list/${page}`
+      );
+      setLoading(false);
+      setProducts([...products, ...productsData?.products]);
+    } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -61,6 +99,7 @@ const HomePage = () => {
 
   useEffect(() => {
     getAllCategories();
+    getTotalProducts();
   }, []);
 
   useEffect(() => {
@@ -122,7 +161,7 @@ const HomePage = () => {
                 <div className="card-body">
                   <h5 className="card-title">{product.name}</h5>
                   <p className="card-text">
-                    {product.description.substring(0, 20)}
+                    {product.description.substring(0, 20)}...
                   </p>
                   <p className="card-text"> ${product.price}</p>
                   <button className="btn btn-primary ms-1">More Details</button>
@@ -132,6 +171,19 @@ const HomePage = () => {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="m-2 p-3">
+            {products && products.length < total && (
+              <button
+                className="btn btn-warning"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(page + 1);
+                }}
+              >
+                {loading ? "Loading..." : "Load More"}
+              </button>
+            )}
           </div>
         </div>
       </div>
