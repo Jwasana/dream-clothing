@@ -269,3 +269,32 @@ export const productListController = async (req, res) => {
     });
   }
 };
+
+//search product controller
+export const searchProductController = async (req, res) => {
+  try {
+    const { keyword } = req.params;
+
+    const result = await productModel
+      .find({
+        $or: [
+          { name: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
+        ],
+      })
+      .select("-photo");
+    res.json(result);
+    // res.status(200).send({
+    //   success: true,
+    //   message: "Search product",
+    //   result,
+    // });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error in search product",
+      error: error.message,
+    });
+  }
+};
