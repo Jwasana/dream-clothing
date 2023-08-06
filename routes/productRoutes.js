@@ -12,6 +12,7 @@ import {
   productCountController,
   productListController,
   searchProductController,
+  similarProductController,
 } from "../controllers/productController.js";
 
 const router = express.Router();
@@ -68,5 +69,8 @@ router.get("/product-list/:page", productListController);
 
 //search product
 router.get("/search/:keyword", searchProductController);
+
+//similar products
+router.get("/related-product/:pid/:cid", similarProductController);
 
 export default router;
