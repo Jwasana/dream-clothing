@@ -298,3 +298,28 @@ export const searchProductController = async (req, res) => {
     });
   }
 };
+
+//related product controller
+export const similarProductController = async (req, res) => {
+  try {
+    const { pid, cid } = req.params;
+
+    const products = await productModel
+      .find({ _id: { $ne: pid }, category: cid })
+      .select("-photo")
+      .limit(3)
+      .populate("category");
+    res.status(200).send({
+      success: true,
+      message: "Related product",
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error while getting related product",
+      error: error.message,
+    });
+  }
+};
