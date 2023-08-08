@@ -2,6 +2,7 @@ import slugify from "slugify";
 import formidable from "express-formidable";
 import fs from "fs";
 import productModel from "../models/productModel.js";
+import categoryModel from "../models/categoryModel.js";
 
 //create product controller
 export const createProductController = async (req, res) => {
@@ -320,6 +321,27 @@ export const similarProductController = async (req, res) => {
       success: false,
       message: "Error while getting related product",
       error: error.message,
+    });
+  }
+};
+
+//categry wise product controller
+export const productCategoryController = async (req, res) => {
+  try {
+    const category = await categoryModel.findOne({ slug: req.params.slug });
+    const products = await productModel.find({ category }).populate("category");
+    res.status(200).send({
+      success: true,
+      message: "products by category",
+      category,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      status: false,
+      message: "Error while getting products by category!",
+      error,
     });
   }
 };
