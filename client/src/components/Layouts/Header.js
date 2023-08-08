@@ -4,9 +4,11 @@ import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
 import "../../index.css";
 import SearchInput from "../Forms/SearchInput";
+import useCategory from "../../hooks/useCategory";
 
 const Header = () => {
   const [auth, setAuth] = useAuth();
+  const categories = useCategory();
 
   //handle Logout
 
@@ -34,6 +36,34 @@ const Header = () => {
                 Home
               </NavLink>
             </li>
+            <li className="nav-item dropdown">
+              <Link
+                className="nav-link dropdown-toggle"
+                to={"/categories"}
+                data-bs-toggle="dropdown"
+              >
+                Categaory
+              </Link>
+
+              <ul className="dropdown-menu">
+                <li>
+                  <Link className="dropdown-item" to={"/categories"}>
+                    All Categories
+                  </Link>
+                </li>
+                {categories?.map((category) => (
+                  <li>
+                    <Link
+                      className="dropdown-item"
+                      to={`/category/${category?.slug}`}
+                    >
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
             {!auth.user ? (
               <>
                 <li className="nav-item">
