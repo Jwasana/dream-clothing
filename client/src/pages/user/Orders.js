@@ -21,8 +21,7 @@ const Orders = () => {
   useEffect(() => {
     if (auth?.token) getOrders();
   }, [auth?.token]);
-  // setOrders("1");
-  console.log(111, orders);
+
   return (
     <Layout title={"Your Orders"}>
       <div className="container-flui p-3 m-3">
@@ -38,22 +37,22 @@ const Orders = () => {
                   <table className="table">
                     <thead>
                       <tr>
-                        <td scope="col">#</td>
-                        <td scope="col">Status</td>
-                        <td scope="col">Buyer</td>
-                        <td scope="col">Date</td>
-                        <td scope="col">Payment</td>
-                        <td scope="col">Quantity</td>
+                        <th scope="col">#</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Buyer</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Payment</th>
+                        <th scope="col">Quantity</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <th>{i + 1}</th>
-                        <th>{order?.status}</th>
-                        <th>{order?.buyer?.name}</th>
-                        <th>{moment(order?.createAt)?.fromNow()}</th>
-                        <th>{order?.payment.success ? "Success" : "Failed"}</th>
-                        <th>{order?.products?.length}</th>
+                        <td>{i + 1}</td>
+                        <td>{order?.status}</td>
+                        <td>{order?.buyer?.name}</td>
+                        <td>{moment(order?.createAt)?.fromNow()}</td>
+                        <td>{order?.payment.success ? "Success" : "Failed"}</td>
+                        <td>{order?.products?.length}</td>
                       </tr>
                     </tbody>
                   </table>
