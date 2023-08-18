@@ -35,12 +35,10 @@ app.use("/api/v1/product", productRoutes);
 
 //rest api
 app.use("*", function (req, res) {
-  // res.sendFile(path.join(__dirname, "./client/build/index.html"));
-  res.send(path.join(__dirname, "./client/build/index.html"));
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+ // res.send(path.join(__dirname, "./client/build/index.html"));
 });
-// app.get("/", (req, res) => {
-//   res.send({ message: "Hello from server!" });
-// });
+
 
 //port
 const PORT = process.env.PORT;
